@@ -1,3 +1,5 @@
+import json
+
 from django.core import serializers
 from django.forms import model_to_dict
 from django.http import JsonResponse
@@ -18,7 +20,8 @@ class TransactionListAPI(View):
 
 class TransactionAddAPI(View):
     def post(self, request, *args, **kwargs):
-        transaction = Transaction(**request.data, user=self.request.user)
+        data = json.loads(request.body)
+        transaction = Transaction(**data, user=self.request.user)
         transaction.save()
         return JsonResponse(transaction.get_json())
 
@@ -30,6 +33,7 @@ class CategoryListAPI(View):
 
 class CategoryAddAPI(View):
     def post(self, request, *args, **kwargs):
-        category = Category(**request.data)
+        data = json.loads(request.body)
+        category = Category(name=data.get('name'))
         category.save()
         return JsonResponse(category.get_json())

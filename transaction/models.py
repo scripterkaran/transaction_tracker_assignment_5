@@ -4,13 +4,21 @@ from django.urls import reverse
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="new category")
 
     def __str__(self):
         return "%s" % (self.name,)
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if self.name is None:
+           return Exception("Field is required")
+        return super(Category, self).save(force_insert=False, force_update=False, using=None,
+             update_fields=None)
+
     def get_json(self):
         return {
+            'id': self.id,
             'name': self.name
         }
 
