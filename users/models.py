@@ -1,29 +1,20 @@
+import binascii
+
+import os
 from django.contrib.auth.models import User
 from django.db import models
-import random
-import string
-
-
-# Create your models here.
-
-def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
-    """
-    https://www.codingforentrepreneurs.com/blog/random-string-generator-in-python/
-    :param size:
-    :param chars:
-    :return:
-    """
-    return ''.join(random.choice(chars) for _ in range(size))
-
 
 class UserToken(models.Model):
-    key = models.CharField(max_length=36)
+    key = models.CharField(max_length=500)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
 
     def save(self, **kwargs):
-        if self.key is None:
-            self.generate_key()
+        self.key = self.generate_key()
         return super(UserToken, self).save(**kwargs)
 
     def generate_key(self):
-        return random_string_generator()
+        return binascii.hexlify(os.urandom(20)).decode()
+
+    def __unicode__(self):
+        return self.key

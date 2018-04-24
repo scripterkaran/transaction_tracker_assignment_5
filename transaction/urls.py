@@ -12,6 +12,8 @@ urlpatterns = [
     # path('', Dashboard.as_view(), name="dashboard"),
     path('transactions/', TransactionListAPI.as_view(), name="transaction-api-list"),
     path('transactions/add/', TransactionAddAPI.as_view(), name="transaction-api-add"),
+    path('categories/', CategoryListAPI.as_view(), name="category-api-list"),
+    path('categories/add/', CategoryAddAPI.as_view(), name="category-api-add"),
     # path('transactions/<int:pk>/', TransactionDetailView.as_view(), name="transaction-detail"),
     # path('', include(category_urlpatterns)),
 ]

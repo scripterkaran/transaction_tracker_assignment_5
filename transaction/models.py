@@ -9,6 +9,10 @@ class Category(models.Model):
     def __str__(self):
         return "%s" % (self.name,)
 
+    def get_json(self):
+        return {
+            'name': self.name
+        }
 
 class Transaction(models.Model):
     DEBIT = 1
@@ -26,15 +30,26 @@ class Transaction(models.Model):
     value = models.DecimalField(max_digits=12, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="transactions")
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        return super(Transaction, self).save(force_insert=False, force_update=False, using=None,
+             update_fields=None)
+
     def get_absolute_url(self):
         return reverse('transaction-detail', kwargs={'pk': self.pk})
+
+    def get_transaction_type(self):
+        if self.transaction_type == 1:
+           return "Debit"
+        return "Credit"
 
     def get_json(self):
         return {
             'user': self.user.username,
             'name': self.name,
+            'type': self.get_transaction_type(),
             'created_at': self.created_at,
-            'modified_at': self.modified_at,
             'value': self.value,
             'category': self.category.name
         }

@@ -5,23 +5,16 @@ from django.contrib.auth.models import User
 from users.models import UserToken
 
 
-def get_auth_header(request):
-    return request.META.get('HTTP_AUTHORIZATION', b'')
-
-
-class TokenBackend:
-    def authenticate(self, request, **kwargs):
-        auth = get_auth_header(request).split()
-        if not auth or auth[0].lower() != b'bearer':
-            return None
-        token_key = auth[1]
-
+class TokenBackend(object):
+    def authenticate(self, token=None):
+        """
+        Try to find a user with the given token
+        """
         try:
-            user_token = UserToken.objects.select_related('user').get(key=token_key)
+            t = UserToken.objects.get(key=token)
+            return t.user
         except UserToken.DoesNotExist:
             return None
-
-        return user_token.user
 
     def get_user(self, user_id):
         try:
